@@ -21,39 +21,58 @@ public class ProxyBridge implements Bridge {
 
 	@Override
 	public void addCity(String city) {
-		// TODO
+		if(real == null){
+			return;
+		}
+		real.addCity(city);
 	}
 
 	@Override
 	public void addHall(String city, String hall, int sits) {
-		// TODO
+		if(real == null){
+			return;
+		}
+		real.addHall(city, hall, sits);
 	}
 
 	@Override
 	public void addAdmin(String city, String user, String pass) {
-		// TODO
+		if(real == null){
+			return;
+		}
+		real.addAdmin(city, user, pass);
 	}
 
 	@Override
 	public int addNewShow(String user, String pass, ShowInfo showInfo) {
-		// TODO
-		return 1;
+		if(real == null){
+			return -1;
+		}
+		return real.addNewShow(user, pass, showInfo);
+
 	}
 
 	@Override
 	public void reserveMemberChairs(int showID, int from, int to) {
-		// TODO
+		if(real == null){
+			return;
+		}
+		real.reserveMemberChairs(showID, from, to);
 	}
 
 	@Override
 	public int newOrder(OrderInfo order) {
-		// TODO
-		return 1;
+		if(real == null){
+			return -1;
+		}
+		return real.newOrder(order);
 	}
 
 	@Override
 	public List<OrderInfo> getWaitings(int id) {
-		// TODO
-		return new LinkedList<>();
+		if(real == null){
+			return null;
+		}
+		return real.getWaitings(id);
 	}
 }

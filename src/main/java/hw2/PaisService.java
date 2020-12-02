@@ -76,6 +76,17 @@ public class PaisService implements Bridge {
             return 0;
         }
 
+        if(!adminRepository.hasAdmin(user)){
+            return 0;
+        }
+        Admin admin = adminRepository.getAdmin(user);
+        if(!admin.getPassword().equals(pass)){
+            return 0;
+        }
+        if(!admin.getCity().getName().equals(city.getName())){
+            return 0;
+        }
+
         Show newShow = new Show(city, city.getHall(showInfo.hall), showInfo.name, showInfo.description,
                                 showInfo.lastOrderDate, showInfo.showTime, showInfo.showDate, showInfo.ticketCost);
         return showRepository.addShow(newShow);

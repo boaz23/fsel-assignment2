@@ -35,8 +35,8 @@ public class OrderTest extends ProjectTest {
 		show1.ticketCost = 120;
 		show1.hastime = false;
 		try {
-			show1.lastOrderDate = dateFormat.parse("30.05.2020 23:59:59").getTime();
-			show1.showDate = dateFormat.parse("20.06.2020 23:59:59").getTime();
+			show1.lastOrderDate = dateFormat.parse("30.05.2025 23:59:59").getTime();
+			show1.showDate = dateFormat.parse("20.06.2025 23:59:59").getTime();
 		} catch (ParseException e) {
 			System.err.println("Wrong time or date: " + e.getMessage());
 		}
@@ -78,6 +78,7 @@ public class OrderTest extends ProjectTest {
 		goodOrder2.showId = this.futureShowId;
 	}
 
+	@Test
 	public void testPlaceOrder() {
 		int reservationId1 = this.placeOrder(goodOrder1);
 		assertTrue(reservationId1 > 0);

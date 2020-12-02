@@ -16,7 +16,8 @@ public class Show {
     private LocalTime showTime;
     private long showDate;
     private double ticketCost;
-    private List<OrderInfo> usersToInform;
+    private List<Order> usersToInform;
+    private boolean[] reservedForMembers;
 
     public Show( City city, Hall hall, String name, String description, long lastOrderDate, LocalTime showTime, long showDate, double ticketCost) {
         this.city = city;
@@ -28,6 +29,7 @@ public class Show {
         this.showDate = showDate;
         this.ticketCost = ticketCost;
         usersToInform = new ArrayList<>();
+        this.reservedForMembers = new boolean[hall.getSeatsAmount()];
     }
 
     public boolean hasTime(){
@@ -36,5 +38,65 @@ public class Show {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void reserveMemberChairs(int from, int to) {
+        for (int i = from - 1; i < to; i++) {
+            reservedForMembers[i] = true;
+        }
+    }
+
+    public void addUserToInform(Order order) {
+        for (Order orderToInform : usersToInform) {
+            if (orderToInform.getOrderInfo().name.equals(order.getOrderInfo().name)) {
+                return;
+            }
+        }
+
+        usersToInform.add(order);
+    }
+
+    public boolean isChairReserved(int chairNumber){
+        return reservedForMembers[chairNumber-1];
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public Hall getHall() {
+        return hall;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public long getLastOrderDate() {
+        return lastOrderDate;
+    }
+
+    public LocalTime getShowTime() {
+        return showTime;
+    }
+
+    public long getShowDate() {
+        return showDate;
+    }
+
+    public double getTicketCost() {
+        return ticketCost;
+    }
+
+    public List<Order> getUsersToInform() {
+        return usersToInform;
     }
 }

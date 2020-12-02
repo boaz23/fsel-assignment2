@@ -3,6 +3,8 @@ package hw2;
 import hw2.bridge.Bridge;
 import hw2.data.*;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PaisService implements Bridge {
@@ -10,11 +12,13 @@ public class PaisService implements Bridge {
     private CityRepository cityRepository;
     private AdminRepository adminRepository;
     private ShowRepository showRepository;
+    private OrderRepository orderRepository;
 
     public PaisService() {
         cityRepository = new CityRepository();
         adminRepository = new AdminRepository();
         showRepository = new ShowRepository();
+        orderRepository = new OrderRepository();
     }
 
     @Override
@@ -94,17 +98,78 @@ public class PaisService implements Bridge {
 
     @Override
     public void reserveMemberChairs(int showID, int from, int to) {
+        if(!showRepository.hasShow(showID)){
+            return;
+        }
+        if(from < 1 | to < 1 | from > to){
+            return;
+        }
 
+        Show show = showRepository.getShow(showID);
+        Hall showHall = show.getHall();
+        if(to > showHall.getSeatsAmount()){
+            return;
+        }
+
+        show.reserveMemberChairs(from, to);
     }
 
     @Override
     public int newOrder(OrderInfo order) {
-        return 0;
+        if(order == null){
+            return 0;
+        }
+        if(!showRepository.hasShow(order.showId)){
+            return 0;
+        }
+
+        try{
+            checkStringNullOrEmpty(order.name, "Name of order request");
+            checkStringNullOrEmpty(order.phone, "Phone number of order request");
+        } catch (IllegalArgumentException e){
+            return 0;
+        }
+        if(order.chairsIds == null || order.chairsIds.length == 0){
+            return 0;
+        }
+
+
+        Show show = showRepository.getShow(order.showId);
+
+        if(show.getLastOrderDate() < (new Date()).getTime()){
+            return 0;
+        }
+
+        int chairAmount = show.getHall().getSeatsAmount();
+        for(int chairsId : order.chairsIds){
+            if(chairsId < 1 | chairsId > chairAmount){
+                return 0;
+            }
+            if(order.memberId == null & show.isChairReserved(chairsId)){
+                return 0;
+            }
+        }
+
+        Order orderWrapper = orderRepository.addOrder(order);
+        show.addUserToInform(orderWrapper);
+
+        return orderWrapper.getOrderId();
     }
 
     @Override
-    public List<OrderInfo> getWaitings(int id) {
-        return null;
+    public List<OrderInfo> getWaitings(int showId) {
+        if (!showRepository.hasShow(showId)){
+            return null;
+        }
+        Show show = showRepository.getShow(showId);
+        List<OrderInfo> orderInfos = new ArrayList<>();
+
+        for(Order order : show.getUsersToInform()){
+            orderInfos.add(order.getOrderInfo());
+        }
+
+        return orderInfos;
+
     }
 
     private void checkStringNullOrEmpty(String str, String parameterName){
